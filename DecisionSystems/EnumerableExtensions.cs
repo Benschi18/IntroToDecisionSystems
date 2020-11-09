@@ -15,5 +15,10 @@ namespace DecisionSystems
             }
             return items.Zip(items.Skip(1), merge);
         }
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> numbers)
+        {
+            var generator = new Random();
+            return numbers.OrderBy(_ => generator.Next());
+        }
     }
 }

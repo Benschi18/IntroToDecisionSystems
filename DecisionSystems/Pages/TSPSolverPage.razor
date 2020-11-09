@@ -123,7 +123,9 @@ else
 
     private readonly IReadOnlyCollection<UITSPSolver> solvers = new UITSPSolver[]
     {
-        new UITSPSolver(new DummySolver(), "Dummy solver", "orange")
+        new UITSPSolver(new DummySolver(), "Dummy solver", "orange"),
+        new UITSPSolver(new RandomSolver(), "Random solver (1)", "yellowgreen"),
+        new UITSPSolver(new RandomSolver(1000), "Random solver (1000)", "green"),
     };
 
     protected override async Task OnInitializedAsync()
