@@ -10,11 +10,12 @@ namespace DecisionSystems.TSP.Solver
 
         public RandomSolver(int iterations)
         {
-            if(iterations < 1)
+            if (iterations < 1)
             {
                 throw new ArgumentException("Iterations must be >= 1");
             }
             this.iterations = iterations;
+
         }
 
         public List<int> Solve(IReadOnlyList<Location> cities)
@@ -33,7 +34,11 @@ namespace DecisionSystems.TSP.Solver
             //    remaining.RemoveAt(index);
             //}
             //return result;
-            return Enumerable.Range(1, cities.Count).Shuffle().ToList();
+            return Enumerable
+                .Repeat(0, iterations)
+                .Select(_ => Enumerable.Range(1, cities.Count).Shuffle().ToList())
+                .OrderBy(solution => Utils.GetDistance(solution, cities))
+                .First();
         }
     }
 }
