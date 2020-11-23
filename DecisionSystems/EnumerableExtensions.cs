@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DecisionSystems.TSP;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DecisionSystems
 {
@@ -19,6 +19,30 @@ namespace DecisionSystems
         {
             var generator = new Random();
             return numbers.OrderBy(_ => generator.Next());
+        }
+        public static TItem MinBy<TItem,TValue>(
+            this IEnumerable<TItem> items,
+            Func<TItem,TValue> selector, 
+            Func<TValue,TValue,bool> isFirstSmaller)
+        {
+            
+            TValue minValue = default;
+            TItem minItem = default;
+            var hasMinItem = false;
+
+            foreach (var item in items)
+            {
+                var value = selector(item);
+                if (!hasMinItem ||isFirstSmaller(value, minValue))
+                {
+                    minValue = value;
+                    minItem = item;
+                }
+                hasMinItem = true;
+            }
+            if (hasMinItem)
+                return minItem;
+            else throw new ArgumentException("Can not calculate minimum item from empty list!");
         }
     }
 }

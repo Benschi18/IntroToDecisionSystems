@@ -9,7 +9,7 @@ namespace DecisionSystems.TSP.Solver
         public List<int> Solve(IReadOnlyList<Location> cities)
         {
             var permutations = CalculatePermutations(cities);
-            return permutations.MinBy(solution => Utils.GetDistance(solution, cities));
+            return permutations.MinBy(tour => Utils.GetDistance(tour,cities),(v1,v2)=>v1<v2).ToList();
         }
 
         private List<int[]> CalculatePermutations(IReadOnlyList<Location> cities)
@@ -17,6 +17,7 @@ namespace DecisionSystems.TSP.Solver
             var result = new List<int[]>();
             var baseTour = Enumerable.Range(1, cities.Count).ToArray();
             CalculatePermutationsRecursive(baseTour, 1, result);
+            return result;
         }
 
         private void CalculatePermutationsRecursive(int[] baseTour, int startIndex, List<int[]> result)
