@@ -20,10 +20,10 @@ namespace DecisionSystems
             var generator = new Random();
             return numbers.OrderBy(_ => generator.Next());
         }
-        public static TItem MinBy<TItem,TValue>(
+        public static TItem BestBy<TItem,TValue>(
             this IEnumerable<TItem> items,
             Func<TItem,TValue> selector, 
-            Func<TValue,TValue,bool> isFirstSmaller)
+            Func<TValue,TValue,bool> isFirstBetter)
         {
             
             TValue minValue = default;
@@ -33,7 +33,7 @@ namespace DecisionSystems
             foreach (var item in items)
             {
                 var value = selector(item);
-                if (!hasMinItem ||isFirstSmaller(value, minValue))
+                if (!hasMinItem ||isFirstBetter(value, minValue))
                 {
                     minValue = value;
                     minItem = item;
