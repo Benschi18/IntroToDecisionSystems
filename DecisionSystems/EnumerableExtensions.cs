@@ -26,23 +26,23 @@ namespace DecisionSystems
             Func<TValue,TValue,bool> isFirstBetter)
         {
             
-            TValue minValue = default;
-            TItem minItem = default;
-            var hasMinItem = false;
+            TValue bestValue = default;
+            TItem bestItem = default;
+            var hasBestItem = false;
 
             foreach (var item in items)
             {
                 var value = selector(item);
-                if (!hasMinItem ||isFirstBetter(value, minValue))
+                if (!hasBestItem ||isFirstBetter(value, bestValue))
                 {
-                    minValue = value;
-                    minItem = item;
+                    bestValue = value;
+                    bestItem = item;
                 }
-                hasMinItem = true;
+                hasBestItem = true;
             }
-            if (hasMinItem)
-                return minItem;
-            else throw new ArgumentException("Can not calculate minimum item from empty list!");
+            if (hasBestItem)
+                return bestItem;
+            else throw new ArgumentException("Can not calculate best item from empty list!");
         }
     }
 }
