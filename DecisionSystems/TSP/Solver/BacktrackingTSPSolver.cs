@@ -29,21 +29,14 @@ namespace DecisionSystems.TSP.Solver
                 //and then calculate permutations of elements with idex > startIndex.
                 for (int i = startIndex; i < baseTour.Length; i++)
                 {
-                    Swap(baseTour, startIndex, i);
+                    baseTour.Swap(startIndex,i);
                     CalculatePermutationsRecursive(baseTour, startIndex++, result);
-                    Swap(baseTour, startIndex, i);
+                    baseTour.Swap(startIndex,i);
                 }
 
             }
         }
 
-        public static void Swap<T>(T[] items, int idx1, int idx2)
-        {
-            //T item1 = items[idx1];
-            //items[idx1] = items[idx2];
-            //items[idx2] = item1;
-
-            (items[idx1], items[idx2]) = (items[idx2], items[idx1]);
-        }
+        
     }
 }

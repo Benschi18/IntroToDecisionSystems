@@ -1,5 +1,4 @@
-﻿using DecisionSystems.TSP;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,6 +42,14 @@ namespace DecisionSystems
             if (hasBestItem)
                 return bestItem;
             else throw new ArgumentException("Can not calculate best item from empty list!");
+        }
+        public static void Swap<T>(this IList<T> items, int idx1, int idx2)
+        {
+            //T item1 = items[idx1];
+            //items[idx1] = items[idx2];
+            //items[idx2] = item1;
+
+            (items[idx1], items[idx2]) = (items[idx2], items[idx1]);
         }
     }
 }

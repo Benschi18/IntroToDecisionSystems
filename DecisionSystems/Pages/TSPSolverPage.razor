@@ -126,6 +126,8 @@ else
         new UITSPSolver(new DummySolver(), "Dummy solver", "orange"),
         new UITSPSolver(new RandomSolver(1), "Random solver (1)", "yellowgreen"),
         new UITSPSolver(new RandomSolver(1000), "Random solver (1000)", "green"),
+        new UITSPSolver(new BacktrackingTSPSolver(), "Backtraking solver", "crimson"),
+        new UITSPSolver(new BranchAndBoundTSPSolver(), "BranchAndBound solver", "steelblue")
     };
 
     protected override async Task OnInitializedAsync()
