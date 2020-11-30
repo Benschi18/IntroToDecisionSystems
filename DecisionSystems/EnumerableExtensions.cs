@@ -17,7 +17,19 @@ namespace DecisionSystems
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> numbers)
         {
             var generator = new Random();
-            return numbers.OrderBy(_ => generator.Next());
+            var data = numbers.ToArray();
+            //TO DO Fisher -Yates-Shuffle
+
+            int n = data.Length;
+            for (int i = 0; i < n; i++)
+            {               
+                int r = i + (int)(generator.NextDouble() * (n - i));
+                T t = data[r];
+                data[r] = data[i];
+                data[i] = t;
+            }
+
+            return data;
         }
         public static TItem BestBy<TItem,TValue>(
             this IEnumerable<TItem> items,
