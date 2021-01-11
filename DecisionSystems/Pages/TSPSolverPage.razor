@@ -101,7 +101,7 @@ else
             if(solution == null) throw new Exception($"Error in solver {Name}: returned null solution.");
 
             if (solution.Any(index => index < 1 || index > cities.Count)) throw new Exception($"Error in solver {Name}: Only indices from 1 to {cities.Count} are allowed, got {string.Join(", ", solution)}.");
-          
+
             if(solution.Distinct().Count() != cities.Count) throw new Exception($"Error in solver {Name}: Only indices from 1 to {cities.Count} are allowed, got {string.Join(", ", solution)}.");
         }
 
@@ -127,7 +127,9 @@ else
         new UITSPSolver(new RandomSolver(1), "Random solver (1)", "yellowgreen"),
         new UITSPSolver(new RandomSolver(1000), "Random solver (1000)", "green"),
         new UITSPSolver(new BacktrackingTSPSolver(), "Backtraking solver", "crimson"),
-        new UITSPSolver(new BranchAndBoundTSPSolver(), "BranchAndBound solver", "steelblue")
+        new UITSPSolver(new BranchAndBoundTSPSolver(), "BranchAndBound solver", "steelblue"),
+        new UITSPSolver(new NearestNeighborConstructionTSPSolver(), "Nearest neigbor construction solver", "lightskyblue"),
+        new UITSPSolver(new NearestNeighborConstructionWithOptimalStartTSPSolver(), "Nearest neigbor construction with optimal start solver", "deepskyblue")
     };
 
     protected override async Task OnInitializedAsync()
