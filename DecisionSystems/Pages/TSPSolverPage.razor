@@ -129,7 +129,8 @@ else
         new UITSPSolver(new BacktrackingTSPSolver(), "Backtraking solver", "crimson"),
         new UITSPSolver(new BranchAndBoundTSPSolver(), "BranchAndBound solver", "steelblue"),
         new UITSPSolver(new NearestNeighborConstructionTSPSolver(), "Nearest neigbor construction solver", "lightskyblue"),
-        new UITSPSolver(new NearestNeighborConstructionWithOptimalStartTSPSolver(), "Nearest neigbor construction with optimal start solver", "deepskyblue")
+        new UITSPSolver(new NearestNeighborConstructionWithOptimalStartTSPSolver(), "Nearest neigbor construction with optimal start solver", "deepskyblue"),
+        new UITSPSolver(new GenticAlgorithmTSPSolver(100,100), "genetic algorithm solver", "red")
     };
 
     protected override async Task OnInitializedAsync()
