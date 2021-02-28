@@ -78,7 +78,7 @@ namespace DecisionSystems.DataPrediction
             return new SerializableDataPredictionSpec { Name = "Weight of fish -> Length of fish", TrainData = trainData, TestData = testData };
         }
 
-        private static Random generator = new Random();
+        private static Random generator = new Random(777);
         private static (SerializableDataPoint[], SerializableDataPoint[]) SplitDataPoints(IReadOnlyCollection<SerializableDataPoint> dataPoints, double threshold)
         {
             var shuffledDataPoints = dataPoints

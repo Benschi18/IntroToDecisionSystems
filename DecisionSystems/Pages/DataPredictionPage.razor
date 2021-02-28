@@ -71,63 +71,67 @@ else
 }
 
 @code {
-    private BECanvasComponent scene;
+        private BECanvasComponent scene;
 
-    public class UIDataPredictionModel
-    {
-        public IDataPredictionModel Model { get; }
-        public TimeSpan TrainDuration { get; }
-
-        public UIDataPredictionModel(IDataPredictionModel model, TimeSpan trainDuration)
+        public class UIDataPredictionModel
         {
-            Model = model ?? throw new ArgumentNullException(nameof(model));
-            if (trainDuration < TimeSpan.Zero)
+            public IDataPredictionModel Model { get; }
+            public TimeSpan TrainDuration { get; }
+
+            public UIDataPredictionModel(IDataPredictionModel model, TimeSpan trainDuration)
             {
-                throw new ArgumentException("Train duration must be greater than zero.");
+                Model = model ?? throw new ArgumentNullException(nameof(model));
+                if (trainDuration < TimeSpan.Zero)
+                {
+                    throw new ArgumentException("Train duration must be greater than zero.");
+                }
+                TrainDuration = trainDuration;
             }
-            TrainDuration = trainDuration;
         }
-    }
 
-    public class UIDataPredictor
-    {
-        private readonly IDataPredictor dataPredictor;
-        private UIDataPredictionModel dataPredictionModel;
-
-        public string Name { get; }
-        public bool IsSelected { get; set; }
-        public string Color { get; }
-
-        public UIDataPredictor(IDataPredictor dataPredictor, string name, string color)
+        public class UIDataPredictor
         {
-            this.dataPredictor = dataPredictor ?? throw new ArgumentNullException(nameof(dataPredictor));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Color = color ?? throw new ArgumentNullException(nameof(color));
+            private readonly IDataPredictor dataPredictor;
+            private UIDataPredictionModel dataPredictionModel;
+
+            public string Name { get; }
+            public bool IsSelected { get; set; }
+            public string Color { get; }
+
+            public UIDataPredictor(IDataPredictor dataPredictor, string name, string color)
+            {
+                this.dataPredictor = dataPredictor ?? throw new ArgumentNullException(nameof(dataPredictor));
+                Name = name ?? throw new ArgumentNullException(nameof(name));
+                Color = color ?? throw new ArgumentNullException(nameof(color));
+            }
+
+            public void Train(IReadOnlyList<DataPoint> trainData, IReadOnlyList<DataPoint> testData)
+            {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                var dataPredictionModel = dataPredictor.Train(trainData);
+                watch.Stop();
+                this.dataPredictionModel = new UIDataPredictionModel(dataPredictionModel, watch.Elapsed);
+            }
+
+            public void Reset()
+            {
+                dataPredictionModel = default;
+            }
+
+            public bool TryGetDataPredictionModel(out UIDataPredictionModel dataPredictionModel)
+            {
+                dataPredictionModel = this.dataPredictionModel;
+                return dataPredictionModel != null;
+            }
         }
 
-        public void Train(IReadOnlyList<DataPoint> trainData, IReadOnlyList<DataPoint> testData)
+        private readonly IReadOnlyCollection<UIDataPredictor> dataPredictors = new UIDataPredictor[]
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            var dataPredictionModel = dataPredictor.Train(trainData);
-            watch.Stop();
-            this.dataPredictionModel = new UIDataPredictionModel(dataPredictionModel, watch.Elapsed);
-        }
-
-        public void Reset()
-        {
-            dataPredictionModel = default;
-        }
-
-        public bool TryGetDataPredictionModel(out UIDataPredictionModel dataPredictionModel)
-        {
-            dataPredictionModel = this.dataPredictionModel;
-            return dataPredictionModel != null;
-        }
-    }
-
-    private readonly IReadOnlyCollection<UIDataPredictor> dataPredictors = new UIDataPredictor[]
-    {
-    };
+            new UIDataPredictor(new ConstantValuePredictor(7),"Constant value predictor (7)","Sienna"),
+            new UIDataPredictor(new ConstantValuePredictor(500),"Constant value predictor (500)","SlateBlue"),
+            new UIDataPredictor(new AverageValuePredictor(),"Average value predictor","Tomato"),
+            new UIDataPredictor(new RandomValuePredictor(),"Random value predictor","SteelBlue")
+        };
 
     private DataPredictionSpec[] specs;
 
