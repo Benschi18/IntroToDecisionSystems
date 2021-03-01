@@ -130,7 +130,8 @@ else
             new UIDataPredictor(new ConstantValuePredictor(7),"Constant value predictor (7)","Sienna"),
             new UIDataPredictor(new ConstantValuePredictor(500),"Constant value predictor (500)","SlateBlue"),
             new UIDataPredictor(new AverageValuePredictor(),"Average value predictor","Tomato"),
-            new UIDataPredictor(new RandomValuePredictor(),"Random value predictor","SteelBlue")
+            new UIDataPredictor(new RandomValuePredictor(),"Random value predictor","SteelBlue"),
+            new UIDataPredictor(new InterpolateFromLeftToRightValuePredictor(),"Interpolate from left To right value predictor","DarkGoldenRod")
         };
 
     private DataPredictionSpec[] specs;

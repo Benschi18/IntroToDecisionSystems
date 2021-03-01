@@ -28,16 +28,20 @@ namespace DecisionSystems.DataPrediction.Predictor
         }
 
         private class RandomDataPredictionModel : IDataPredictionModel
-        {
-            private int v;
+        {           
+            private readonly double minValue;
+            private readonly double maxValue;
+
             private Random generator = new Random(777);
             public RandomDataPredictionModel(double minValue,double maxValue)
             {
+                this.minValue = minValue;
+                this.maxValue = maxValue;
             }
 
-            public double Text(double independentValue)
+            public double Test(double independentValue)
             {
-                return kp
+                return generator.NextDouble()*(maxValue-minValue)+minValue;
             }
         }
     }
