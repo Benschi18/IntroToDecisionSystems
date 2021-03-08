@@ -1,65 +1,68 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.ML;
+using Microsoft.ML.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DecisionSystems.DataPrediction.Predictor
 {
     public interface IDataPredictor
     {
         IDataPredictionModel Train(IReadOnlyList<DataPoint> data);
-
-
     }
-    public class InterpolateFromLeftToRightValuePredictor : IDataPredictor
-    {
-        public InterpolateFromLeftToRightValuePredictor()
-        {
-        }
 
+    public class GradientDescentPredictor : IDataPredictor
+    {
         public IDataPredictionModel Train(IReadOnlyList<DataPoint> data)
         {
-            var left = data.BestBy(dataPoint => dataPoint.IndependentValue, (a, b) => a < b);
-            var right = data.BestBy(dataPoint => dataPoint.IndependentValue, (a, b) => a > b);
-            var dx = right.IndependentValue - left.IndependentValue;
-            var dy = right.DependentValue - left.DependentValue;
-            var k = dy / dx;
-            var d = left.DependentValue - k * left.IndependentValue;
-            //return new InterpolateFromLeftToRightPredictionModel(MinX(data), MaxX(data),MinY(data),MaxY(data));
-            return new LinearPredictionModel(k, d);
+            var mlContext = new MLContext(seed: 0);
+
+            var dataPoints = data.Select(MLNetDataPoint.FromDomain);
+            var dataView = mlContext.Data.LoadFromEnumerable(dataPoints);
+            var pipeline = mlContext.Transforms.NormalizeMinMax(new[] { new InputOutputColumnPair("Features")})
+                .Append(mlContext.Regression.Trainers.OnlineGradientDescent(learningRate: 1));
+            var model = pipeline.Fit(dataView); //Training
+
+            var predictionFunction= mlContext.Model.CreatePredictionEngine<MLNetDataPoint, MLNetDataPointPrediction>(model);
+            return new MlNetDataPredictionModel(predictionFunction);
         }
 
-        //private double MinX(IReadOnlyList<DataPoint> data)
-        //{
-        //    return data.Min(DataPoint => DataPoint.IndependentValue);
-        //}
-
-        //private double MaxX(IReadOnlyList<DataPoint> data)
-        //{
-        //    return data.Max(DataPoint => DataPoint.IndependentValue);
-        //}
-        //private double MinY(IReadOnlyList<DataPoint> data)
-        //{
-        //    return data.Min(DataPoint => DataPoint.DependentValue);
-        //}
-
-        //private double MaxY(IReadOnlyList<DataPoint> data)
-        //{
-        //    return data.Max(DataPoint => DataPoint.DependentValue);
-        //}
-
-
-        private class LinearPredictionModel : IDataPredictionModel
+        private class MLNetDataPoint    // ML.Net works with float-values only.
         {
-            private readonly double k;
-            private readonly double d;
+            [VectorType(1)] // number of features is 1
 
-            public LinearPredictionModel(double k, double d)
+            public float[] features; // independent values
+            public float label; // dependent value
+
+            public static MLNetDataPoint FromDomain(DataPoint dataPoint)
             {
-                this.k = k;
-                this.d = d;
+                return new MLNetDataPoint
+                {
+                    features = new[]
+                    {
+                        (float)dataPoint.IndependentValue
+                    },
+                    label = (float)dataPoint.DependentValue
+                };
+            }
+        }
+        private class MLNetDataPointPrediction
+        {
+            public float score; //predicted value
+        }
+
+        private class MlNetDataPredictionModel : IDataPredictionModel
+        {
+            private PredictionEngine<MLNetDataPoint, MLNetDataPointPrediction> predictionFunction;
+
+            public MlNetDataPredictionModel(PredictionEngine<MLNetDataPoint, MLNetDataPointPrediction> predictionFunction)
+            {
+                this.predictionFunction = predictionFunction;
             }
 
             public double Test(double independentValue)
             {
-                return k * independentValue + d;
+                var prediction = predictionFunction.Predict(new MLNetDataPoint {features=new[] { (float)independentValue} });
+                return prediction.score;
             }
         }
     }
